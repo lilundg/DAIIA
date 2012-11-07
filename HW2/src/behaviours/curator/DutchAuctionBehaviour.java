@@ -98,6 +98,8 @@ public class DutchAuctionBehaviour extends Behaviour {
 			
 		case END_AUCTION:
 			
+			log("Auction ended");
+			if(!sold) log("Didn't sell artifact");
 			message.setPerformative(ACLMessage.INFORM);
 			message.setContent("NO_BIDS");
 			myAgent.send(message);
