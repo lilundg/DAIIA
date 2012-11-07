@@ -32,7 +32,7 @@ public class WaitingForAuctionBehaviour extends CyclicBehaviour {
 					System.out.println(myAgent.getLocalName() + ": auction has started");
 					
 					//Auction with 100 as this agents highest buying price
-					myAgent.addBehaviour(new NewAuctionBehaviour("100"));
+					myAgent.addBehaviour(new NewAuctionBehaviour("55000"));
 				}
 			}	
 		}

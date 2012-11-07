@@ -55,7 +55,7 @@ public class DutchAuctionBehaviour extends Behaviour {
 		case START_AUCTION:
 			
 			log("Auction starting");
-			message.setContent("AUCTION START");
+			message.setContent("AUCTION");
 			myAgent.send(message);
 			state = SEND_RFC;
 			break;
@@ -99,6 +99,7 @@ public class DutchAuctionBehaviour extends Behaviour {
 			
 			message.setPerformative(ACLMessage.INFORM);
 			message.setContent("NO_BIDS");
+			myAgent.send(message);
 		}
 		
 	}
@@ -164,7 +165,7 @@ public class DutchAuctionBehaviour extends Behaviour {
 	private void lowerPrice() {
 		price -= priceChange;
 		if(price < art.getPrice()+500){
-			log("Price to low. Ending auction");
+			log("Price too low. Ending auction");
 			state = END_AUCTION;
 		}else{
 			state = SEND_RFC;
