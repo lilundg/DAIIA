@@ -40,7 +40,8 @@ public class DutchAuctionBehaviour extends Behaviour {
 		this.toc = new TimeOutChecker();
 		mt = createMessageTemplate();
 		message = new ACLMessage(ACLMessage.INFORM);
-		message.setOntology("auction");
+		message.setProtocol(InteractionProtocol.FIPA_DUTCH_AUCTION);
+		message.setOntology("AUCTION");
 	}
 	
 	public void onStart(){
@@ -55,7 +56,7 @@ public class DutchAuctionBehaviour extends Behaviour {
 		case START_AUCTION:
 			
 			log("Auction starting");
-			message.setContent("AUCTION");
+			message.setContent("AUCTION" + art.getGenre());
 			myAgent.send(message);
 			state = SEND_RFC;
 			break;
@@ -151,6 +152,7 @@ public class DutchAuctionBehaviour extends Behaviour {
 			result = DFService.search(myAgent, dfd, sc);
 			if(result.length > 0){
 				for(int i = 0; i < result.length; i++){
+					log("Found " + result[i].getName().getLocalName());
 					message.addReceiver(result[i].getName());
 				}
 			}else{
