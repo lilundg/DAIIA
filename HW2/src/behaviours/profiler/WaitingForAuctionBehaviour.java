@@ -22,17 +22,23 @@ public class WaitingForAuctionBehaviour extends CyclicBehaviour {
 	public void action() {
 		
 		//message templte for dutch auction
-		MessageTemplate mt = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_DUTCH_AUCTION);
+		MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_DUTCH_AUCTION));
 
 		msg = myAgent.receive(mt);
 		
 		if(msg != null) {
 			if(msg.getPerformative() == ACLMessage.INFORM) {
-				if(msg.getOntology().equals("AUCTION")) {		
-					System.out.println(myAgent.getLocalName() + ": auction has started");
+				if(msg.getOntology().equals("AUCTION")) {
+					if(msg.getContent().startsWith("AUCTION")) {
+						System.out.println(myAgent.getLocalName() + ": auction has started");
+						//Auction with 100 as this agents highest buying price
+						myAgent.addBehaviour(new NewAuctionBehaviour("73000"));
+					}
+						
+					else
+						myAgent.putBack(msg);
 					
-					//Auction with 100 as this agents highest buying price
-					myAgent.addBehaviour(new NewAuctionBehaviour("55000"));
+
 				}
 			}	
 		}

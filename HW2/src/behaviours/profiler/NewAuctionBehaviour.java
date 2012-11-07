@@ -11,7 +11,6 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-@SuppressWarnings("serial")
 public class NewAuctionBehaviour extends Behaviour {
 
 	private ACLMessage msg;
@@ -19,7 +18,6 @@ public class NewAuctionBehaviour extends Behaviour {
 	private MessageTemplate mt;
 	private int step = 0;
 	private String max_price;
-	
 	
 	public NewAuctionBehaviour(String price) {
 		this.max_price = price;
@@ -81,11 +79,12 @@ public class NewAuctionBehaviour extends Behaviour {
 	}
 	
 	
-	protected boolean handleCFP(ACLMessage cfp) {
+	protected void handleCFP(ACLMessage cfp) {
 		
 		//The logic is simple: if the price offered is lower than agents highest_price then accept
 		try {
 			if(Integer.valueOf(cfp.getContent()) < Integer.valueOf(max_price)) {
+				System.out.println(myAgent.getLocalName() + ": " + msg.getContent() + " is less than " + max_price);
 				System.out.println(myAgent.getLocalName() + ": accepted");	
 				reply = cfp.createReply();
 				reply.setPerformative(ACLMessage.PROPOSE);
@@ -93,17 +92,15 @@ public class NewAuctionBehaviour extends Behaviour {
 				step = 1;
 			}
 			else
-				System.out.println(myAgent.getLocalName() + ": did not accept");	
-				 
+				System.out.println(myAgent.getLocalName() + ": doing nothing");			 
 			
-		//If content/cost of item was not understandable we leave the auction		
+		//If cfp (actually just the cost) of an item was not understandable we leave the auction		
 		} catch (NumberFormatException e) {
+			System.out.println(myAgent.getLocalName() + ": did not understand a word of that");	
 			reply = cfp.createReply();
 			reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
 			myAgent.send(reply);
 			step = 2;
 		}	
-		
-		return true;
 	}
 }
