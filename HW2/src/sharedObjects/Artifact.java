@@ -14,16 +14,15 @@ public class Artifact implements Serializable {
 	private String creator;
 	private String origin;
 	private String genre;
+	private int price;
 	
-	public Artifact() {
-	}
-	
-	public Artifact(String id, String name, String creator, String origin, String genre) {
+	public Artifact(String id, String name, String creator, String origin, String genre, int price) {
 		setId(id);
 		setName(name);
 		setCreator(creator);
 		setOrigin(origin);
 		setGenre(genre);
+		setPrice(price);
 	}
 	
 	/***********************************
@@ -70,7 +69,15 @@ public class Artifact implements Serializable {
 		this.genre = genre;
 	}
 	
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
 	public String toString() {
-		return "#" + id +" Name: "+ name + " Creator: "+creator + " Made in: " + origin + " Genre: "+ genre;
+		return "#" + id +" Name: "+ name + " Creator: "+creator + " Made in: " + origin + " Genre: "+ genre + " Value: " + price;
 	}
 }
