@@ -16,19 +16,19 @@ import jade.lang.acl.MessageTemplate;
 @SuppressWarnings("serial")
 public class DutchAuctionBehaviour extends Behaviour {
 	
-	private final int START_AUCTION = 0;
-	private final int SEND_RFC = 1;
-	private final int WAIT_FOR_REPLIES = 2;
-	private final int NO_REPLY = 3;
-	private final int END_AUCTION = 4;
+	protected final int START_AUCTION = 0;
+	protected final int SEND_RFC = 1;
+	protected final int WAIT_FOR_REPLIES = 2;
+	protected final int NO_REPLY = 3;
+	protected final int END_AUCTION = 4;
 	
-	long timeout;
-	MessageTemplate mt;
-	ACLMessage message;
-	Artifact art;
-	TimeOutChecker toc;
-	int state, price, priceChange;
-	boolean done, sold;
+	protected long timeout;
+	protected MessageTemplate mt;
+	protected ACLMessage message;
+	protected Artifact art;
+	protected TimeOutChecker toc;
+	protected int state, price, priceChange;
+	protected boolean done, sold;
 	
 	public DutchAuctionBehaviour(long timeout ,Artifact artifact){
 		this.timeout = timeout;
@@ -141,7 +141,7 @@ public class DutchAuctionBehaviour extends Behaviour {
 		message.removeReceiver(msg.getSender());
 	}
 	
-	private void lookForBuyers(){
+	protected void lookForBuyers(){
 		DFAgentDescription dfd = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
 		sd.addProtocols(InteractionProtocol.FIPA_DUTCH_AUCTION);
@@ -167,7 +167,7 @@ public class DutchAuctionBehaviour extends Behaviour {
 		}
 	}
 	
-	private void lowerPrice() {
+	protected void lowerPrice() {
 		price -= priceChange;
 		if(price < art.getPrice()*1.1){
 			log("Price too low. Ending auction");
@@ -177,7 +177,7 @@ public class DutchAuctionBehaviour extends Behaviour {
 		}
 	}
 	
-	private void log(String message){
+	protected void log(String message){
 		System.out.println(myAgent.getLocalName() + ": " + message);
 	}
 
