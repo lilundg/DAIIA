@@ -12,7 +12,7 @@
  * 1. Wait for / recieve bid
  * 2. Is bid higher or lower then the maximum price we are prepared to pay? 
  * If lower then go to 3. Else goto 1.
- * 3. Calculate a startinglevel based on nothing
+ * 3. Calculate a startinglevel based on the maxprice
  * 4. If bid is <= max price then we start working our way up from the startinglevel 
  * by adding the difference (bid - startinglevel) divided by (u - 10). 
  */
@@ -34,16 +34,11 @@ public class RNewAuctionBehaviour extends Behaviour {
 	private ACLMessage reply;
 	private MessageTemplate mt;
 	private int step = 0;
-	private String max_price;
 	
 	private int max = 70000; //the highest price we are willing to pay
 	private int u = new Random().nextInt(9) + 1; //the utility of item to agent
 	private int min = 20000 ; //a constact used for calculating the starting level of our "bids"
 	private int startlevel = min + u * 5000; //calculate the 
-	
-	public RNewAuctionBehaviour(String price) {
-		this.max_price = price;
-	}
 	
 	@Override
 	public void action() {		

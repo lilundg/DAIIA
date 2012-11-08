@@ -38,9 +38,7 @@ public class RWaitingForAuctionBehaviour extends CyclicBehaviour {
 				if(msg.getOntology().equals("AUCTION")) {
 					if(msg.getContent().startsWith("AUCTION")) {
 						System.out.println(myAgent.getLocalName() + ": auction has started");
-						//Auction with 100 as this agents highest buying price
-						int price = 40000+rand.nextInt(15000);
-						myAgent.addBehaviour(new RNewAuctionBehaviour(Integer.toString(price)));
+						myAgent.addBehaviour(new RNewAuctionBehaviour());
 					}
 						
 					else
