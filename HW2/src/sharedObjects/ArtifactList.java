@@ -64,12 +64,16 @@ public class ArtifactList {
 	
 	//for the sake of testing we populate the list here
 	public void init() {
-		items.add(new Artifact("1","The Lost Boys","Val Kilmer","USA","art",5000));
-		items.add(new Artifact("2","Gangreen","Picasso","Spain","art",20000));
-		items.add(new Artifact("3","Bronosaurus","","Canada","history",40000));
-		items.add(new Artifact("4","Tyrannosaurus Rex","","Canada","history",15000));
-		items.add(new Artifact("5","Crying","Roberto Struff","Italy","art",10000));
-		items.add(new Artifact("6","Two peasents and a mule","Alangrino Piatsso","Italy","art",1000));
-		items.add(new Artifact("7","Last Stand","Leonardo DaVinci","Italy","statue",33000));
+		items.add(1, new Artifact("1","The Lost Boys","Val Kilmer","USA","art",5000));
+		items.add(2, new Artifact("2","Gangreen","Picasso","Spain","art",20000));
+		items.add(3, new Artifact("3","Bronosaurus","","Canada","history",40000));
+		items.add(4, new Artifact("4","Tyrannosaurus Rex","","Canada","history",15000));
+		items.add(5, new Artifact("5","Crying","Roberto Struff","Italy","art",10000));
+		items.add(6, new Artifact("6","Two peasents and a mule","Alangrino Piatsso","Italy","art",1000));
+		items.add(7, new Artifact("7","Last Stand","Leonardo DaVinci","Italy","statue",33000));
+	}
+	
+	public Artifact getArtifact(int index){
+		return items.get(index);
 	}
 }
