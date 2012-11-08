@@ -6,6 +6,8 @@
 
 package behaviours.redefined.profiler;
 
+import java.util.Random;
+
 import jade.core.behaviours.Behaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -19,6 +21,13 @@ public class RNewAuctionBehaviour extends Behaviour {
 	private MessageTemplate mt;
 	private int step = 0;
 	private String max_price;
+	private int lastprice;
+	private boolean activeAuction;
+	
+	private int max = 60000; //the highest price we are willing to pay
+	private int u = new Random().nextInt(10) + 1; //the utility of item to agent
+	private int min = 6000 ; //a constact used for calculating the starting level of our "bids"
+	private int startlevel = min * u; //calculate the 
 	
 	public RNewAuctionBehaviour(String price) {
 		this.max_price = price;
@@ -29,7 +38,6 @@ public class RNewAuctionBehaviour extends Behaviour {
 
 		switch (step) {
 		case 0:
-			
 			mt = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_DUTCH_AUCTION);
 			msg = myAgent.receive(mt);		
 			
@@ -82,18 +90,33 @@ public class RNewAuctionBehaviour extends Behaviour {
 	
 	protected void handleCFP(ACLMessage cfp) {
 		
-		//The logic is simple: if the price offered is lower than agents highest_price then accept
 		try {
-			if(Integer.valueOf(cfp.getContent()) < Integer.valueOf(max_price)) {
-				System.out.println(myAgent.getLocalName() + ": " + msg.getContent() + " is less than " + max_price);
-				System.out.println(myAgent.getLocalName() + ": accepted");	
-				reply = cfp.createReply();
-				reply.setPerformative(ACLMessage.PROPOSE);
-				myAgent.send(reply);
-				step = 1;
+			//this is the current auction price
+			int offer = Integer.valueOf(cfp.getContent());		
+			
+			//debug info
+			System.out.println(myAgent.getLocalName() + ": startlevel: " + startlevel + "\n utility: " + u );
+			
+			//if the price is below our max limit then we start working 
+			if(offer < Integer.valueOf(max)) {
+				
+				if(startlevel >= offer) {
+					System.out.println(myAgent.getLocalName() + ": " + msg.getContent() + " is less than " + max_price);
+					System.out.println(myAgent.getLocalName() + ": accepted");	
+					reply = cfp.createReply();
+					reply.setPerformative(ACLMessage.PROPOSE);
+					myAgent.send(reply);
+					step = 1;
+				}
+				else if (startlevel < offer) {		
+					startlevel += (offer - startlevel) / (11 - u);
+				}
+
+				else
+					System.out.println(myAgent.getLocalName() + ": doing nothing");	
 			}
-			else
-				System.out.println(myAgent.getLocalName() + ": doing nothing");			 
+
+		 
 			
 		//If cfp (actually just the cost) of an item was not understandable we leave the auction		
 		} catch (NumberFormatException e) {

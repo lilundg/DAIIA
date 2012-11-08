@@ -11,6 +11,7 @@
 package agents.redefined.profiler;
 
 import behaviours.profiler.WaitingForAuctionBehaviour;
+import behaviours.redefined.profiler.RWaitingForAuctionBehaviour;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -28,7 +29,7 @@ public class RProfilerAgent extends Agent {
 		registerAsBuyer();
 		
 		//Wait for start of auction
-		addBehaviour(new WaitingForAuctionBehaviour());	
+		addBehaviour(new RWaitingForAuctionBehaviour());	
 	}
 	
 	protected void takeDown() { 

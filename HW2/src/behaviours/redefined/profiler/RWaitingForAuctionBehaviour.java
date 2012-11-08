@@ -45,8 +45,6 @@ public class RWaitingForAuctionBehaviour extends CyclicBehaviour {
 						
 					else
 						myAgent.putBack(msg);
-					
-
 				}
 			}	
 		}
