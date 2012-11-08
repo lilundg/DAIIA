@@ -33,9 +33,9 @@ public class RCuratorAgent extends Agent {
 		registerService();
 		ArtifactList artlist = new ArtifactList();
 		artlist.init();
-		Random rand = new Random();
+//		Random rand = new Random();
 		doWait(WAIT);
-		addBehaviour(new RDutchAuctionBehaviour(TIMEOUT, artlist.getArtifact(rand.nextInt(8))));
+		addBehaviour(new RDutchAuctionBehaviour(TIMEOUT, artlist.getArtifact(2)));
 	}
 	
 	protected void takeDown(){
