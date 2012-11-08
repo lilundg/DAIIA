@@ -103,6 +103,7 @@ public class DutchAuctionBehaviour extends Behaviour {
 			message.setPerformative(ACLMessage.INFORM);
 			message.setContent("NO_BIDS");
 			myAgent.send(message);
+			done = true;
 		}
 		
 	}
@@ -168,7 +169,7 @@ public class DutchAuctionBehaviour extends Behaviour {
 	
 	private void lowerPrice() {
 		price -= priceChange;
-		if(price < art.getPrice()+500){
+		if(price < art.getPrice()*1.1){
 			log("Price too low. Ending auction");
 			state = END_AUCTION;
 		}else{

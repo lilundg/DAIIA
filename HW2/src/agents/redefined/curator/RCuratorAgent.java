@@ -7,10 +7,10 @@
  * and handling them.
  *****************************************************************************/
 
-package agents.curator;
+package agents.redefined.curator;
 
 import sharedObjects.Artifact;
-import behaviours.curator.RedefinedDutchAuctionBehaviour;
+import behaviours.redefined.curator.RDutchAuctionBehaviour;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -20,7 +20,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 
 
 @SuppressWarnings("serial")
-public class RedefinedCuratorAgent extends Agent {
+public class RCuratorAgent extends Agent {
 	
 	private final long WAIT = 5000;
 	private final long TIMEOUT = 5000;
@@ -29,7 +29,7 @@ public class RedefinedCuratorAgent extends Agent {
 		System.out.println(getLocalName() + ": starting.");
 		registerService();
 		doWait(WAIT);
-		addBehaviour(new RedefinedDutchAuctionBehaviour(TIMEOUT, new Artifact("3","Bronosaurus","","Canada","history",30000)));
+		addBehaviour(new RDutchAuctionBehaviour(TIMEOUT, new Artifact("3","Bronosaurus","","Canada","history",30000)));
 	}
 	
 	protected void takeDown(){

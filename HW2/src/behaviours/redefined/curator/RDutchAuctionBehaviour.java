@@ -1,5 +1,6 @@
-package behaviours.curator;
+package behaviours.redefined.curator;
 
+import behaviours.curator.TimeoutBehaviour;
 import sharedObjects.Artifact;
 import sharedObjects.TimeOutChecker;
 
@@ -14,7 +15,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 @SuppressWarnings("serial")
-public class RedefinedDutchAuctionBehaviour extends Behaviour {
+public class RDutchAuctionBehaviour extends Behaviour {
 	
 	private final int START_AUCTION = 0;
 	private final int SEND_RFC = 1;
@@ -30,7 +31,7 @@ public class RedefinedDutchAuctionBehaviour extends Behaviour {
 	int state, price;
 	boolean done, sold;
 	
-	public RedefinedDutchAuctionBehaviour(long timeout ,Artifact artifact){
+	public RDutchAuctionBehaviour(long timeout ,Artifact artifact){
 		this.timeout = timeout;
 		this.art = artifact;
 		this.done = false;
