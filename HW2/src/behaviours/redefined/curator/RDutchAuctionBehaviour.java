@@ -104,6 +104,10 @@ public class RDutchAuctionBehaviour extends Behaviour {
 			message.setContent("NO_BIDS");
 			myAgent.send(message);
 			done = true;
+		default:
+			log("Auction aborted");
+			done = true;
+			
 		}
 		
 	}
@@ -159,7 +163,7 @@ public class RDutchAuctionBehaviour extends Behaviour {
 					message.addReceiver(result[i].getName());
 				}
 			}else{
-				done = true;
+				state = -1;
 				log("No buyer found");
 			}
 		} catch (FIPAException e) {
