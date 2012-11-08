@@ -72,4 +72,8 @@ public class ArtifactList {
 		items.add(new Artifact("6","Two peasents and a mule","Alangrino Piatsso","Italy","art",1000));
 		items.add(new Artifact("7","Last Stand","Leonardo DaVinci","Italy","statue",33000));
 	}
+	
+	public Artifact getArtifact(int index){
+		return items.get(index);
+	}
 }
