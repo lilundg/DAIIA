@@ -14,6 +14,7 @@ public class RDutchAuctionBehaviour extends DutchAuctionBehaviour {
 		lookForBuyers();
 		this.price = art.getPrice()*2;
 	}
+	
 	protected void lowerPrice() {
 		price -= 1000;
 		if(price < art.getPrice()*1.1){
