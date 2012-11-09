@@ -37,7 +37,7 @@ public class RCuratorAgent extends Agent {
 		doWait(WAIT);
 		addBehaviour(new RDutchAuctionBehaviour(TIMEOUT, artlist.getArtifact(2)));
 	}
-	
+	 
 	protected void takeDown(){
 		try{ 
 			DFService.deregister(this); 
