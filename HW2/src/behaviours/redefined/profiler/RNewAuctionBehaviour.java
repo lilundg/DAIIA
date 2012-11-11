@@ -35,11 +35,6 @@ public class RNewAuctionBehaviour extends Behaviour {
 	private MessageTemplate mt;
 	private int step = 0;
 	
-//	private int max = 70000; //the highest price we are willing to pay
-//	private int u = new Random().nextInt(9) + 1; //the utility of item to agent (1-9)
-//	private int min = 20000 ; //a constact used for calculating the starting level of our "bids"
-//	private int startlevel = min + (u * 5000); //calculate the where we will start our bidding raise from
-	
 	private int max = 70000; //the highest price we are willing to pay
 	private int u = new Random().nextInt(10) + 1; //the utility of item to agent (1-9)
 	private int min = (1/5) * max ; //a constant used for calculating the starting level of our "bids"
