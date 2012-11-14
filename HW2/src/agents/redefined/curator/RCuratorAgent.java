@@ -26,7 +26,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 public class RCuratorAgent extends Agent {
 	
 	private final long WAIT = 5000;
-	private final long TIMEOUT = 5000;
+	private final long TIMEOUT = 2000;
 	
 	protected void setup() {
 		System.out.println(getLocalName() + ": starting.");
@@ -37,7 +37,7 @@ public class RCuratorAgent extends Agent {
 		doWait(WAIT);
 		addBehaviour(new RDutchAuctionBehaviour(TIMEOUT, artlist.getArtifact(2)));
 	}
-	
+	 
 	protected void takeDown(){
 		try{ 
 			DFService.deregister(this); 

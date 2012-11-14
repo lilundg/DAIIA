@@ -35,10 +35,15 @@ public class RNewAuctionBehaviour extends Behaviour {
 	private MessageTemplate mt;
 	private int step = 0;
 	
+//	private int max = 70000; //the highest price we are willing to pay
+//	private int u = new Random().nextInt(9) + 1; //the utility of item to agent (1-9)
+//	private int min = 20000 ; //a constact used for calculating the starting level of our "bids"
+//	private int startlevel = min + (u * 5000); //calculate the where we will start our bidding raise from
+	
 	private int max = 70000; //the highest price we are willing to pay
-	private int u = new Random().nextInt(9) + 1; //the utility of item to agent
-	private int min = 20000 ; //a constact used for calculating the starting level of our "bids"
-	private int startlevel = min + u * 5000; //calculate the 
+	private int u = new Random().nextInt(10) + 1; //the utility of item to agent (1-9)
+	private int min = (1/5) * max ; //a constant used for calculating the starting level of our "bids"
+	private int startlevel = min + ((1/10) * (max - min) * u);
 	
 	@Override
 	public void action() {		
@@ -48,18 +53,14 @@ public class RNewAuctionBehaviour extends Behaviour {
 			mt = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_DUTCH_AUCTION);
 			msg = myAgent.receive(mt);		
 			
-			if(msg != null) {
+			if(msg != null) {	
 				
-				System.out.println(myAgent.getLocalName() + ": recieved something from: " + msg.getSender().getLocalName());	
-				
-				if(msg.getPerformative() == ACLMessage.CFP) {		
-					System.out.println(myAgent.getLocalName() + ": a cfp arrived");				
+				if(msg.getPerformative() == ACLMessage.CFP) {				
 					handleCFP(msg);
 				}
 				
 				else if(msg.getPerformative() == ACLMessage.INFORM) {
 					if(msg.getContent().equals("NO_BIDS")) {
-						System.out.println(myAgent.getLocalName() + ": no bids -> no auction");
 						step = 2;
 					}			
 				}
@@ -101,21 +102,23 @@ public class RNewAuctionBehaviour extends Behaviour {
 			//this is the current auction price
 			int offer = Integer.valueOf(cfp.getContent());		
 			
-			//debug info
-			System.out.println(myAgent.getLocalName() + ": u = " + u + " prepared to pay " + startlevel );
-			
-			//if the price is below our max limit then we start working 
-			if(offer <= Integer.valueOf(max)) {
+			//if the price is lower or match our max limit then we are interested in bidding
+			if(offer <= max) {
 				
-				if(startlevel >= offer) {
+				//if the price is lower or match our dynamic bidding limit then we wish to buy
+				if( offer <= startlevel) {
 //					System.out.println(myAgent.getLocalName() + ": accepted");	
 					reply = cfp.createReply();
 					reply.setPerformative(ACLMessage.PROPOSE);
 					myAgent.send(reply);
 					step = 1;
 				}
-				else if (startlevel < offer) {		
-					startlevel += (offer - startlevel) / (12 - u);
+				
+				//Otherwise the offer/current bid is above our dynamic limit so we increase it.
+				else if (offer > startlevel) {		
+					startlevel += (offer - startlevel) / (11 - u);
+					//debug info
+					System.out.println(myAgent.getLocalName() + ": u = " + u + " prepared to pay " + startlevel );
 				}
 
 				else
