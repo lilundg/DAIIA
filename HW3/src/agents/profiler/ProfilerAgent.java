@@ -11,6 +11,7 @@
 package agents.profiler;
 
 import behaviours.profiler.WaitingForAuctionBehaviour;
+import behaviours.profiler.WaitingForAuctionBehaviour;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;

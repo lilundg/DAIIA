@@ -8,6 +8,7 @@ package behaviours.profiler;
 
 import java.util.Random;
 
+
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -38,15 +39,11 @@ public class WaitingForAuctionBehaviour extends CyclicBehaviour {
 				if(msg.getOntology().equals("AUCTION")) {
 					if(msg.getContent().startsWith("AUCTION")) {
 						System.out.println(myAgent.getLocalName() + ": auction has started");
-						//Auction with 100 as this agents highest buying price
-						int price = 40000+rand.nextInt(15000);
-						myAgent.addBehaviour(new NewAuctionBehaviour(Integer.toString(price)));
+						myAgent.addBehaviour(new NewAuctionBehaviour());
 					}
 						
 					else
 						myAgent.putBack(msg);
-					
-
 				}
 			}	
 		}

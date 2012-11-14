@@ -9,8 +9,11 @@
 
 package agents.curator;
 
-import sharedObjects.Artifact;
-import behaviours.curator.DutchAuctionBehaviour;
+import java.util.Random;
+
+import sharedObjects.ArtifactList;
+import behaviours.curator.RDutchAuctionBehaviour;
+
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -28,8 +31,11 @@ public class CuratorAgent extends Agent {
 	protected void setup() {
 		System.out.println(getLocalName() + ": starting.");
 		registerService();
+		ArtifactList artlist = new ArtifactList();
+		artlist.init();
+//		Random rand = new Random();
 		doWait(WAIT);
-		addBehaviour(new DutchAuctionBehaviour(TIMEOUT, new Artifact("3","Bronosaurus","","Canada","history",40000)));
+		addBehaviour(new RDutchAuctionBehaviour(TIMEOUT, artlist.getArtifact(2)));
 	}
 	
 	protected void takeDown(){
