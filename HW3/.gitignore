@@ -1,0 +1,9 @@
+bin/*
+.metadata
+.settings
+.classpath
+.project
+.DS_Store
+MTPs-Main-Container.txt
+APDescription.txt
+*.bat
