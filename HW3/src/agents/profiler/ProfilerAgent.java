@@ -24,6 +24,7 @@ import jade.content.onto.basic.Action;
 import jade.content.onto.basic.Result;
 import jade.core.Agent;
 import jade.core.Location;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPANames;
@@ -60,13 +61,19 @@ public class ProfilerAgent extends Agent {
 		}
 
 		//Register agent at DF as buyer
-		registerAsBuyer();
+		//registerAsBuyer();
 		
 		//Wait for start of auction
-		addBehaviour(new WaitingForAuctionBehaviour());	
+		//addBehaviour(new WaitingForAuctionBehaviour());	
 	}
 	
+	protected void beforeClone(){
+		System.out.println(getLocalName() + ": Cloning");
+	}
 	
+	protected void afterClone(){
+		System.out.println(getLocalName() + ": Cloned");
+	}
 	
 	protected void takeDown() { 
 		System.out.println(getLocalName() + ": goodbye.");
@@ -75,7 +82,7 @@ public class ProfilerAgent extends Agent {
 	private void durp() throws UngroundedException, CodecException, OntologyException {
 		
 		System.out.println(getLocalName() + ": looking for location.");		
-		
+		doWait(5000);
 		Action action = new Action();
 		action.setActor(getAMS());
 		action.setAction(new QueryPlatformLocationsAction());
@@ -90,12 +97,34 @@ public class ProfilerAgent extends Agent {
 		Result result = (Result) ce;
 		
 		Iterator it = result.getItems().iterator();
-		
+		int i = 0;
 		while(it.hasNext()) {
 			Location loc = (Location) it.next();
 			locations.put(loc.getName(), loc);
 			System.out.println("locations: " + loc.getName());
+			if(i > 0){
+				addBehaviour(new cloneBehaviour(loc, getLocalName()+"-Clone"+i));
+			}
+			System.out.println(i++);
 		}
+	}
+	
+	private class cloneBehaviour extends OneShotBehaviour{
+		Location loc;
+		String n;
+		
+		private cloneBehaviour(Location l, String name){
+			loc = l;
+			n = name;
+		}
+
+		@Override
+		public void action() {
+			doClone(loc,n);
+			
+		}
+		
+		
 	}
 	
 	void sendRequest(Action action) {
@@ -133,6 +162,5 @@ public class ProfilerAgent extends Agent {
             DFService.register(this, dfd );  
         }
         catch (FIPAException fe) { fe.printStackTrace(); }
-           
 	}
 }
