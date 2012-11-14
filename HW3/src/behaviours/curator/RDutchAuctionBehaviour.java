@@ -1,6 +1,5 @@
-package behaviours.redefined.curator;
+package behaviours.curator;
 
-import behaviours.curator.DutchAuctionBehaviour;
 import sharedObjects.Artifact;
 
 @SuppressWarnings("serial")
