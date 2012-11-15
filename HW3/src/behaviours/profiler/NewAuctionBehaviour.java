@@ -22,6 +22,9 @@ package behaviours.profiler;
 
 import java.util.Random;
 
+import sharedObjects.AuctionResult;
+
+import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
@@ -34,18 +37,23 @@ public class NewAuctionBehaviour extends Behaviour {
 	private ACLMessage reply;
 	private MessageTemplate mt;
 	private int step = 0;
+	private AuctionResult result;
 	
+	private int buy = 0;
 	private int max = 70000; //the highest price we are willing to pay
 	private int u = new Random().nextInt(9) + 1; //the utility of item to agent
 	private int min = 20000 ; //a constact used for calculating the starting level of our "bids"
 	private int startlevel = min + u * 5000; //calculate the 
 	
+	public NewAuctionBehaviour(AuctionResult res){
+		this.result = res;
+	}
+	
 	@Override
-	public void action() {		
-
+	public void action() {
+		mt = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_DUTCH_AUCTION);
 		switch (step) {
 		case 0:
-			mt = MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_DUTCH_AUCTION);
 			msg = myAgent.receive(mt);		
 			
 			if(msg != null) {
@@ -79,11 +87,19 @@ public class NewAuctionBehaviour extends Behaviour {
 				if(msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
 					System.out.println(myAgent.getLocalName() + ": the offer was accepted");
 					step = 2;
-					//handleAuctionWinBehavior......
+					result.setPrice(buy);
 				}
 			}
 			break;
-	
+		case 2:
+			System.out.println(myAgent.getLocalName() + ": ET phone home");
+			ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+			msg.addReceiver(new AID("Controller", AID.ISLOCALNAME));
+			msg.setContent("home");
+			myAgent.send(msg);
+			step = 3;
+			myAgent.removeBehaviour(this);
+			break;
 		default:
 			break;
 		}
@@ -91,7 +107,7 @@ public class NewAuctionBehaviour extends Behaviour {
 
 	@Override
 	public boolean done() {
-		return step == 2;
+		return step == 3;
 	}
 	
 	
@@ -112,6 +128,7 @@ public class NewAuctionBehaviour extends Behaviour {
 					reply = cfp.createReply();
 					reply.setPerformative(ACLMessage.PROPOSE);
 					myAgent.send(reply);
+					this.buy = offer;
 					step = 1;
 				}
 				else if (startlevel < offer) {		

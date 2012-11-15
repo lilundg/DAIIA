@@ -129,10 +129,12 @@ public class DutchAuctionBehaviour extends Behaviour {
 			sold = true;
 			reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
 			reply.setContent(art.toString());
+			myAgent.send(reply);
 		}else{
 			log("Item already sold. Rejected " + msg.getSender().getLocalName());
 			reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
 			reply.setContent("Better luck next time");
+			myAgent.send(reply);
 		}
 	}
 

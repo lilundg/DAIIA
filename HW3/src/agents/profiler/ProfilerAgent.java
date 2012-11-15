@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import sharedObjects.AuctionResult;
+
 import behaviours.profiler.WaitingForAuctionBehaviour;
 import jade.content.Concept;
 import jade.content.ContentElement;
@@ -41,7 +43,8 @@ import jade.lang.acl.MessageTemplate;
 public class ProfilerAgent extends Agent {
 
 	AID home, controller, auctioneer;
-	Location location;
+	Location location, away;
+	AuctionResult result;
 	
 
 	protected void setup() {	
@@ -68,16 +71,16 @@ public class ProfilerAgent extends Agent {
 	}
 
 	protected void beforeMove(){
-		try{ 
-			DFService.deregister(this); 
-		}catch(FIPAException fe) { 
-			fe.printStackTrace(); 
-		}
 		System.out.println(getLocalName() + ": Moving to " + location);
 	}
 
 	protected void afterMove(){
 		System.out.println(getLocalName() + ": Moved to " + location);
+		/*ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.addReceiver(home);
+		msg.setOntology("bestprice");
+		msg.setContent("");*/
+		System.out.println(getLocalName() + ": best offer from " + result.getLocation() + " was " + result.getPrice() + "$$");
 	}
 
 	protected void beforeClone(){
@@ -86,10 +89,12 @@ public class ProfilerAgent extends Agent {
 
 	protected void afterClone(){
 		System.out.println(getLocalName() + ": Cloned to" + location);
+		this.away = this.location;
 		init();
 		sendInform("clone");
 		registerAsBuyer();
-		addBehaviour(new WaitingForAuctionBehaviour());
+		result = new AuctionResult(location.getName());
+		addBehaviour(new WaitingForAuctionBehaviour(result));
 	}
 
 	protected void takeDown() { 
@@ -143,7 +148,7 @@ public class ProfilerAgent extends Agent {
 				block();
 				return; 
 			}
-
+			System.out.println(getLocalName() + ": all hail the hypno toad");
 			if(msg.getPerformative() == ACLMessage.REQUEST)
 			try {
 				ContentElement content = getContentManager().extractContent(msg);
@@ -159,15 +164,17 @@ public class ProfilerAgent extends Agent {
 						location = l;
 						doClone(location, newName);
 					}
-				}/*
+				}
 				else if (concept instanceof MoveAction){
+					System.out.println(getLocalName() + ": move");
 					MoveAction ma = (MoveAction)concept;
 					Location l = ma.getMobileAgentDescription().getDestination();
 					if (l != null){
+						System.out.println(getLocalName() + ": move damnit to " + l.getName());
 						location = l;
-						doMove(l);
+						myAgent.doMove(location);
 					}
-				}*/
+				}
 			}
 			catch (Exception e) {
 				e.printStackTrace();

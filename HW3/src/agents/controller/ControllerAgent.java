@@ -121,7 +121,7 @@ public class ControllerAgent extends Agent {
 		}
 		
 		public void action() {
-
+			int count = 0;
 			switch(state){
 			case 0:
 				clone(auctioneers[0]);
@@ -154,6 +154,22 @@ public class ControllerAgent extends Agent {
 			case 4:
 				startAuctions();
 				state = 5;
+				break;
+			case 5:
+				if(count < 2){
+					ACLMessage msg3 = receive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+					if (msg3 == null) {
+						block();
+						return; 
+					}
+					if(msg3.getContent().equals("home")){
+						System.out.println(getLocalName() + ": Moving " + msg3.getSender().getLocalName());
+						move(msg3.getSender(), new AID("Profiler", AID.ISLOCALNAME));
+						count++;
+					}
+					break;
+				}else
+					state = 6;
 				break;
 			default:
 				done = true;
@@ -213,6 +229,47 @@ public class ControllerAgent extends Agent {
 			ca.setNewName(newName);
 			ca.setMobileAgentDescription(mad);
 			sendRequest(new Action(profiler, ca));
+		}
+		
+		private void move(AID who, AID where){
+			Location loc = null;
+			System.out.println(getLocalName() + ": looking for location.");		
+			WhereIsAgentAction act = new WhereIsAgentAction();
+			act.setAgentIdentifier(where);
+			Action action = new Action();
+			action.setActor(getAMS());
+			action.setAction(act);
+			sendRequest(action);
+			
+			Map locations = new HashMap();	
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchSender(getAMS()), MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+			ACLMessage resp = blockingReceive();
+			
+			ContentElement ce;
+			try {
+				ce = getContentManager().extractContent(resp);
+				Result result = (Result) ce;
+				Iterator it = result.getItems().iterator();
+				while(it.hasNext()) {
+					loc = (Location) it.next();
+				}
+			} catch (UngroundedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CodecException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OntologyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			MobileAgentDescription mad = new MobileAgentDescription();
+			mad.setName(where);
+			mad.setDestination(loc);
+			MoveAction ma = new MoveAction();
+			ma.setMobileAgentDescription(mad);
+			sendRequest(new Action(who, ma));
 		}
 
 		@Override

@@ -8,6 +8,8 @@ package behaviours.profiler;
 
 import java.util.Random;
 
+import sharedObjects.AuctionResult;
+
 
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.FIPANames;
@@ -21,6 +23,11 @@ public class WaitingForAuctionBehaviour extends CyclicBehaviour {
 	@SuppressWarnings("unused")
 	private String highest_price;
 	Random rand;
+	AuctionResult result;
+	
+	public WaitingForAuctionBehaviour(AuctionResult res){
+		this.result = res;
+	}
 	
 	public void onStart(){
 		rand = new Random();
@@ -39,7 +46,7 @@ public class WaitingForAuctionBehaviour extends CyclicBehaviour {
 				if(msg.getOntology().equals("AUCTION")) {
 					if(msg.getContent().startsWith("AUCTION")) {
 						System.out.println(myAgent.getLocalName() + ": auction has started");
-						myAgent.addBehaviour(new NewAuctionBehaviour());
+						myAgent.addBehaviour(new NewAuctionBehaviour(result));
 					}
 						
 					else
