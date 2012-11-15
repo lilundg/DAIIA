@@ -162,18 +162,19 @@ public class ControllerAgent extends Agent {
 		}
 		
 		private void startAuctions() {
+			
 			ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 			msg.addReceiver(auctioneers[0]);
 			msg.addReceiver(auctioneers[1]);
 			msg.setContent("start");
 			myAgent.send(msg);
+			System.out.println(getLocalName() + ": Requesting start of auctions.");		
 			
 		}
 
 		private void clone(AID auction){
 			Location loc = null;
 			System.out.println(getLocalName() + ": looking for location.");		
-			//doWait(5000);
 			WhereIsAgentAction act = new WhereIsAgentAction();
 			act.setAgentIdentifier(auction);
 			Action action = new Action();

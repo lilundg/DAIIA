@@ -15,11 +15,14 @@ import sharedObjects.ArtifactList;
 import behaviours.curator.RDutchAuctionBehaviour;
 
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPANames.InteractionProtocol;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 
 @SuppressWarnings("serial")
@@ -31,11 +34,9 @@ public class CuratorAgent extends Agent {
 	protected void setup() {
 		System.out.println(getLocalName() + ": starting.");
 		registerService();
-		ArtifactList artlist = new ArtifactList();
-		artlist.init();
 //		Random rand = new Random();
-		doWait(WAIT);
-		addBehaviour(new RDutchAuctionBehaviour(TIMEOUT, artlist.getArtifact(2)));
+		//addBehaviour(new RDutchAuctionBehaviour(TIMEOUT, artlist.getArtifact(2)));
+		addBehaviour(new waitForStart(this));
 	}
 	
 	protected void takeDown(){
@@ -64,6 +65,30 @@ public class CuratorAgent extends Agent {
 		} catch (FIPAException e) {
 			e.printStackTrace();
 		}	
+	}
+	
+	private class waitForStart extends CyclicBehaviour{
+		private waitForStart(Agent a){
+			super(a);
+		}
+
+		@Override
+		public void action() {
+			ACLMessage msg = myAgent.receive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+
+			if (msg == null) {
+				block();
+				return; 
+			}
+			//System.out.println(myAgent.getLocalName() + ": Recived request.");
+			if(msg.getContent().equals("start")){
+				ArtifactList artlist = new ArtifactList();
+				artlist.init();
+				System.out.println(myAgent.getLocalName() + ": Starting auction.");
+				addBehaviour(new RDutchAuctionBehaviour(TIMEOUT, artlist.getArtifact(2)));
+			}
+			
+		}
 	}
 	
 }

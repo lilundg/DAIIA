@@ -145,7 +145,7 @@ public class DutchAuctionBehaviour extends Behaviour {
 		DFAgentDescription dfd = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
 		sd.addProtocols(InteractionProtocol.FIPA_DUTCH_AUCTION);
-		sd.setType("buyer");
+		sd.setType("buyer-" + myAgent.getLocalName());
 		SearchConstraints sc = new SearchConstraints();
 		sc.setMaxResults(-1L);
 		dfd.addServices(sd);
@@ -160,6 +160,7 @@ public class DutchAuctionBehaviour extends Behaviour {
 				}
 			}else{
 				done = true;
+				state = END_AUCTION;
 				log("No buyer found");
 			}
 		} catch (FIPAException e) {

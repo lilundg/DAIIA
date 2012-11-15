@@ -40,7 +40,9 @@ import jade.lang.acl.MessageTemplate;
 @SuppressWarnings("serial")
 public class ProfilerAgent extends Agent {
 
-	AID home, controller;
+	AID home, controller, auctioneer;
+	Location location;
+	
 
 	protected void setup() {	
 		System.out.println(getLocalName() + ": starting.");
@@ -71,22 +73,23 @@ public class ProfilerAgent extends Agent {
 		}catch(FIPAException fe) { 
 			fe.printStackTrace(); 
 		}
-		System.out.println(getLocalName() + ": Moving");
+		System.out.println(getLocalName() + ": Moving to " + location);
 	}
 
 	protected void afterMove(){
-		System.out.println(getLocalName() + ": Moved");
+		System.out.println(getLocalName() + ": Moved to " + location);
 	}
 
 	protected void beforeClone(){
-		System.out.println(getLocalName() + ": Cloning");
+		System.out.println(getLocalName() + ": Cloning to " + location);
 	}
 
 	protected void afterClone(){
-		System.out.println(getLocalName() + ": Cloned");
+		System.out.println(getLocalName() + ": Cloned to" + location);
 		init();
 		sendInform("clone");
 		registerAsBuyer();
+		addBehaviour(new WaitingForAuctionBehaviour());
 	}
 
 	protected void takeDown() { 
@@ -114,7 +117,7 @@ public class ProfilerAgent extends Agent {
 		dfd.setName( getAID() ); 
 		ServiceDescription sd  = new ServiceDescription();
 		sd.addProtocols(FIPANames.InteractionProtocol.FIPA_DUTCH_AUCTION);	
-		sd.setType("buyer");
+		sd.setType("buyer-" + auctioneer.getLocalName());
 		sd.setName(getLocalName());
 		dfd.addServices(sd);
 
@@ -151,15 +154,20 @@ public class ProfilerAgent extends Agent {
 					CloneAction ca = (CloneAction)concept;
 					String newName = ca.getNewName();
 					Location l = ca.getMobileAgentDescription().getDestination();
-					if (l != null)
-						doClone(l, newName);
-				}
+					if (l != null){
+						auctioneer = ca.getMobileAgentDescription().getName();
+						location = l;
+						doClone(location, newName);
+					}
+				}/*
 				else if (concept instanceof MoveAction){
 					MoveAction ma = (MoveAction)concept;
 					Location l = ma.getMobileAgentDescription().getDestination();
-					if (l != null)
+					if (l != null){
+						location = l;
 						doMove(l);
-				}
+					}
+				}*/
 			}
 			catch (Exception e) {
 				e.printStackTrace();
