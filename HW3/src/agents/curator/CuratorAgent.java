@@ -29,7 +29,7 @@ import jade.lang.acl.MessageTemplate;
 public class CuratorAgent extends Agent {
 	
 	private final long WAIT = 5000;
-	private final long TIMEOUT = 5000;
+	private final long TIMEOUT = 2000;
 	
 	protected void setup() {
 		System.out.println(getLocalName() + ": starting.");

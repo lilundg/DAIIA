@@ -206,7 +206,7 @@ public class ControllerAgent extends Agent {
 			}
 			
 			MobileAgentDescription mad = new MobileAgentDescription();
-			mad.setName(profiler);
+			mad.setName(auction);
 			mad.setDestination(loc);
 			String newName = profiler.getLocalName() + "-clone" + auction.getLocalName();
 			CloneAction ca = new CloneAction();
