@@ -3,13 +3,21 @@ package sharedObjects;
 import jade.util.leap.Serializable;
 
 public class AuctionResult implements Serializable {
+	private static final long serialVersionUID = 1L;
 	
-	String location;
+	String location, auctioneer;
 	int price;
 
-	public AuctionResult(String loc){
+	public AuctionResult(String agent, String loc){
+		this.auctioneer = agent;
 		this.location = loc;
 		this.price = 0;
+	}
+	
+	public AuctionResult(String agent, String loc, int Price){
+		this.auctioneer = agent;
+		this.location = loc;
+		this.price = Price;
 	}
 	
 	public int getPrice() {
@@ -22,5 +30,13 @@ public class AuctionResult implements Serializable {
 
 	public String getLocation() {
 		return location;
+	}
+
+	public String getAgentName() {
+		return this.auctioneer;
+	}
+	
+	public String toString(){
+		return this.auctioneer + " " + this.location + " " + this.price;
 	}
 }

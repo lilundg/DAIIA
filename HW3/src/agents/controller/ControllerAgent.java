@@ -163,7 +163,7 @@ public class ControllerAgent extends Agent {
 						return; 
 					}
 					if(msg3.getContent().equals("home")){
-						System.out.println(getLocalName() + ": Moving " + msg3.getSender().getLocalName());
+						//System.out.println(getLocalName() + ": Moving " + msg3.getSender().getLocalName());
 						move(msg3.getSender(), new AID("Profiler", AID.ISLOCALNAME));
 						count++;
 					}
@@ -279,7 +279,7 @@ public class ControllerAgent extends Agent {
 		
 		void sendRequest(Action action) {
 
-			System.out.println(getLocalName() + ": lets send request with action ");
+			//System.out.println(getLocalName() + ": lets send request with action ");
 			ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 			
 			//These are musts 
@@ -292,7 +292,7 @@ public class ControllerAgent extends Agent {
 			}
 			catch (Exception ex) { ex.printStackTrace(); }
 		
-			System.out.println(getLocalName() + ": send successfull ");
+			//System.out.println(getLocalName() + ": send successfull ");
 		
 		}
 	}

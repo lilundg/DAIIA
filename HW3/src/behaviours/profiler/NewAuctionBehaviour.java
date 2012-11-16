@@ -58,10 +58,10 @@ public class NewAuctionBehaviour extends Behaviour {
 			
 			if(msg != null) {
 				
-				System.out.println(myAgent.getLocalName() + ": recieved something from: " + msg.getSender().getLocalName());	
+				//System.out.println(myAgent.getLocalName() + ": recieved something from: " + msg.getSender().getLocalName());	
 				
 				if(msg.getPerformative() == ACLMessage.CFP) {		
-					System.out.println(myAgent.getLocalName() + ": a cfp arrived");				
+					//System.out.println(myAgent.getLocalName() + ": a cfp arrived");				
 					handleCFP(msg);
 				}
 				
@@ -92,7 +92,7 @@ public class NewAuctionBehaviour extends Behaviour {
 			}
 			break;
 		case 2:
-			System.out.println(myAgent.getLocalName() + ": ET phone home");
+			//System.out.println(myAgent.getLocalName() + ": ET phone home");
 			ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 			msg.addReceiver(new AID("Controller", AID.ISLOCALNAME));
 			msg.setContent("home");

@@ -8,6 +8,7 @@ package agents.profiler;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Scanner;
 
 import sharedObjects.AuctionResult;
 
@@ -23,6 +24,7 @@ import jade.content.onto.basic.Result;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Location;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
@@ -45,6 +47,7 @@ public class ProfilerAgent extends Agent {
 	AID home, controller, auctioneer;
 	Location location, away;
 	AuctionResult result;
+	Behaviour resWait;
 	
 
 	protected void setup() {	
@@ -54,6 +57,8 @@ public class ProfilerAgent extends Agent {
 		controller = new AID("Controller", AID.ISLOCALNAME);
 		
 		addBehaviour(new ReceiveCommands(this));
+		resWait = new WaitForResult(this);
+		addBehaviour(resWait);
 		
 		
 
@@ -76,11 +81,8 @@ public class ProfilerAgent extends Agent {
 
 	protected void afterMove(){
 		System.out.println(getLocalName() + ": Moved to " + location);
-		/*ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.addReceiver(home);
-		msg.setOntology("bestprice");
-		msg.setContent("");*/
-		System.out.println(getLocalName() + ": best offer from " + result.getLocation() + " was " + result.getPrice() + "$$");
+		registerOffer();
+		System.out.println(getLocalName() + ": best offer from " + result.getLocation() + " was " + result.getPrice());
 	}
 
 	protected void beforeClone(){
@@ -89,11 +91,12 @@ public class ProfilerAgent extends Agent {
 
 	protected void afterClone(){
 		System.out.println(getLocalName() + ": Cloned to" + location);
+		removeBehaviour(resWait);
 		this.away = this.location;
 		init();
 		sendInform("clone");
 		registerAsBuyer();
-		result = new AuctionResult(location.getName());
+		result = new AuctionResult(auctioneer.getLocalName(), location.getName());
 		addBehaviour(new WaitingForAuctionBehaviour(result));
 	}
 
@@ -105,7 +108,13 @@ public class ProfilerAgent extends Agent {
 		System.out.println(getLocalName() + ": goodbye.");
 	}
 	
-	
+	private void registerOffer(){
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.addReceiver(home);
+		msg.setOntology("AuctionResult");
+		msg.setContent(result.toString());
+		send(msg);
+	}
 	
 	private void sendInform(String content){
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
@@ -134,7 +143,7 @@ public class ProfilerAgent extends Agent {
 	}
 
 	class ReceiveCommands extends CyclicBehaviour {
-		Location destination;
+		//Location destination;
 
 		ReceiveCommands(Agent a) {
 			super(a);
@@ -148,7 +157,7 @@ public class ProfilerAgent extends Agent {
 				block();
 				return; 
 			}
-			System.out.println(getLocalName() + ": all hail the hypno toad");
+			//System.out.println(getLocalName() + ": all hail the hypno toad");
 			if(msg.getPerformative() == ACLMessage.REQUEST)
 			try {
 				ContentElement content = getContentManager().extractContent(msg);
@@ -166,11 +175,11 @@ public class ProfilerAgent extends Agent {
 					}
 				}
 				else if (concept instanceof MoveAction){
-					System.out.println(getLocalName() + ": move");
+					//System.out.println(getLocalName() + ": move");
 					MoveAction ma = (MoveAction)concept;
 					Location l = ma.getMobileAgentDescription().getDestination();
 					if (l != null){
-						System.out.println(getLocalName() + ": move damnit to " + l.getName());
+						//System.out.println(getLocalName() + ": move damnit to " + l.getName());
 						location = l;
 						myAgent.doMove(location);
 					}
@@ -179,6 +188,61 @@ public class ProfilerAgent extends Agent {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	private class WaitForResult extends Behaviour{
+		int state, replies;
+		AuctionResult[] results;
+		
+		private WaitForResult(Agent a){
+			super(a);
+			this.results = new AuctionResult[2];
+			this.state = 0;
+			this.replies = 0;
+		}
+
+		@Override
+		public void action() {
+			switch(state){
+			case 0:
+				ACLMessage msg = receive(MessageTemplate.MatchOntology("AuctionResult"));
+
+				if (msg == null) {
+					block();
+					return; 
+				}
+				if(msg.getPerformative() == ACLMessage.INFORM){
+					String m = msg.getContent();
+					Scanner scan = new Scanner(m);
+					String name = null;
+					String loc = null;
+					int price = 0;
+					name = scan.next();
+					loc = scan.next();
+					price = scan.nextInt();
+					scan.close();
+					results[replies] = new AuctionResult(name, loc, price);
+					replies++;
+					if(replies > 1)
+						state = 1;
+				}
+				break;
+			case 1:
+				int cheapest = 0;
+				if(results[0].getPrice() > results[1].getPrice())
+					cheapest = 1;
+				System.out.println(myAgent.getLocalName() + ": Participant " + results[cheapest].getAgentName() + " from " 
+					+ results[cheapest].getLocation() + " is offering best price (" + results[cheapest].getPrice() + ").");
+				state = -1;
+				break;
+			default: break;
+			}
+		}
+
+		@Override
+		public boolean done() {
+			return state == -1;
 		}
 	}
 }
